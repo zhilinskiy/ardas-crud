@@ -33,7 +33,7 @@
                             <a class="nav-link @if(\Route::is('home')) active @endif" href="/">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link @if(\Route::is('product.*')) active @endif" href="{{route('products.index')}}">Products list</a>
+                            <a class="nav-link @if(\Route::is('products.*')) active @endif" href="{{route('products.index')}}">Products list</a>
                         </li>
                     </ul>
                 </div>

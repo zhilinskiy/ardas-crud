@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Option;
 use App\Product;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -25,7 +26,12 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return view('products.new_edit',
+            [
+                'product' => new Product(),
+                'options' => Option::all(),
+            ]
+        );
     }
 
     /**
@@ -47,7 +53,15 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        //
+        $product->load('options');
+        $options = Option::whereNotIn('id', $product->options->pluck('id'))->get();
+
+        return view('products.new_edit',
+            [
+                'product' => $product,
+                'options' => $options,
+            ]
+        );
     }
 
     /**

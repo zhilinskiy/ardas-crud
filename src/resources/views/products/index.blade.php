@@ -7,6 +7,9 @@
                 <div class="card">
                     <div class="card-header">Products in database</div>
                     <div class="card-body">
+                        <p class="text-right">
+                            <a href="{{route('products.create')}}" class="btn btn-outline-primary">New product</a>
+                        </p>
                         <table class="table">
                             <thead>
                             <tr>
