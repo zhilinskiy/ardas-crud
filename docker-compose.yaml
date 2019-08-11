@@ -1,0 +1,59 @@
+version: '3'
+
+networks:
+    ardas:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 192.168.190.0/24
+
+services:
+    ardas_nginx:
+        container_name: ardas_nginx
+        image: nginx:1.17.2-alpine
+        tty: true
+        ports:
+            - "${HTTP_EXTERNAL_PORT}:80"
+        env_file: .env
+        depends_on:
+            - ardas
+        volumes:
+            - ./src:/var/www
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        networks:
+            - ardas
+    ardas_db:
+        image: mysql:8.0
+        container_name: ardas_db
+        command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        environment:
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        ports:
+            - ${DB_EXTERNAL_PORT}:3306
+        env_file: .env
+        networks:
+            - ardas
+    ardas:
+        container_name: ardas
+        build:
+            context: docker/php7-fpm
+        environment:
+            XDEBUG_CONFIG: "remote_host=192.168.190.1 remote_enable=1"
+            PHP_IDE_CONFIG: "serverName=ardas"
+        expose:
+            - 9000
+            - 9001
+        depends_on:
+            - ardas_db
+        links:
+            - ardas_db
+        volumes:
+            - ./src:/var/www
+            - ./docker/php7-fpm/local.ini:/usr/local/etc/php/conf.d/local.ini
+        env_file: .env
+        networks:
+            - ardas
