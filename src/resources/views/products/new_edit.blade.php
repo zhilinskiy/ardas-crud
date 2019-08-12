@@ -14,10 +14,10 @@
                     </div>
                     <div class="card-body">
                         @if($product->id)
-                            <form action="{{route('products.store')}}" method="POST">
-                        @else
                             <form action="{{route('products.update', $product)}}" method="POST">
-                            @method('PUT')
+                                @method('PUT')
+                        @else
+                            <form action="{{route('products.store')}}" method="POST">
                         @endif
                             @csrf
                             <div class="form-group">
@@ -31,7 +31,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="price">Product price</label>
-                                <input type="number" name="price" id="price"
+                                <input type="text" name="price" id="price" placeholder="0.00"
                                        value="{{ old('price', $product->price) }}"
                                        class="form-control @error('price') is-invalid @enderror">
                                 @error('price')

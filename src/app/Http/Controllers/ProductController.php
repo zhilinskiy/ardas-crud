@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Option;
 use App\Product;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
+use App\Http\Requests\CreateEditProduct;
 
 class ProductController extends Controller
 {
@@ -16,7 +17,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return view('products.index', ['products' => Product::all()]);
+        return view('products.index', ['products' => Product::latest()->get()]);
     }
 
     /**
@@ -37,12 +38,27 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param CreateEditProduct $request
      * @return Response
      */
-    public function store(Request $request)
+    public function store(CreateEditProduct $request)
     {
-        //
+        try {
+            DB::transaction(
+                function () use ($request) {
+                    $options = $this->getOptionsFromRequest();
+                    $product = new Product(
+                        $request->all(['name', 'price'])
+                    );
+                    $product->save();
+                    $product->options()->sync($options);
+                }
+            );
+        } catch (\Exception $e) {
+            return redirect()->back();
+        }
+
+        return redirect()->route('products.index');
     }
 
     /**
@@ -67,13 +83,28 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param CreateEditProduct $request
      * @param Product $product
      * @return Response
      */
-    public function update(Request $request, Product $product)
+    public function update(CreateEditProduct $request, Product $product)
     {
-        //
+        try {
+            DB::transaction(
+                function () use ($request, $product) {
+                    $options = $this->getOptionsFromRequest();
+                    $product->fill(
+                        $request->all(['name', 'price'])
+                    );
+                    $product->save();
+                    $product->options()->sync($options);
+                }
+            );
+        } catch (\Exception $e) {
+            return redirect()->back();
+        }
+
+        return redirect()->route('products.index');
     }
 
     /**
@@ -85,5 +116,25 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         //
+    }
+
+    /**
+     * Get product valid options from request.
+     *
+     * @return array
+     */
+    protected function getOptionsFromRequest()
+    {
+        return collect(
+            request()->get('options', [])
+        )->filter(
+            function ($value, $key) {
+                return ((int) $key > 0) ? Option::whereId((int) $key)->exists() : false;
+            }
+        )->map(
+            function ($value) {
+                return ['value' => $value];
+            }
+        )->toArray();
     }
 }
