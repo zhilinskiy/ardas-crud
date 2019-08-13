@@ -30,6 +30,32 @@ try {
 
             return false;
         });
+
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            $('#deleteProductBtn')
+                .attr('data-href', $(event.relatedTarget).data('href'));
+        });
+
+        $('#deleteProductBtn').click(function () {
+            let btn = $(this),
+            deleteForm = $('<form>', {
+                'action': btn.data('href'),
+                'method': 'POST'
+            }).append($('<input>', {
+                'name': '_method',
+                'value': 'DELETE',
+                'type': 'hidden'
+            })).append($('<input>', {
+                'name': '_token',
+                'value': $('meta[name="csrf-token"]')[0].content,
+                'type': 'hidden'
+            }));
+            $(document.body).append(deleteForm);
+            deleteForm.submit();
+
+            return false;
+        });
+
     });
 
 } catch (e) {}

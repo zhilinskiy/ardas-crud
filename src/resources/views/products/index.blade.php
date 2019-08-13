@@ -27,13 +27,35 @@
                                     <td>{{$product->created_at}}</td>
                                     <td>
                                         <a href="{{route('products.edit', $product)}}" class="btn btn-outline-primary">Edit</a>
-                                        <a href="{{route('products.destroy', $product)}}" class="btn btn-outline-danger">Delete</a>
+                                        <a href="javascript:void 0"
+                                           data-toggle="modal" data-target="#deleteModal"
+                                           data-href="{{route('products.destroy', $product)}}" class="btn btn-outline-danger">Delete</a>
                                     </td>
                                 </tr>
                             @endforeach
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Delete confirmation modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete product</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    Are you sure?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <a type="button" class="btn btn-primary" id="deleteProductBtn">Delete product</a>
                 </div>
             </div>
         </div>

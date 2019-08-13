@@ -115,7 +115,15 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        try {
+            DB::transaction(function () use ($product) {
+                $product->delete();
+            });
+        } catch (\Exception $e) {
+            return redirect()->back();
+        }
+
+        return redirect()->route('products.index');
     }
 
     /**
