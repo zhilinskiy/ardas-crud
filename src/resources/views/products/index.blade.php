@@ -7,9 +7,21 @@
                 <div class="card">
                     <div class="card-header">Products in database</div>
                     <div class="card-body">
-                        <p class="text-right">
-                            <a href="{{route('products.create')}}" class="btn btn-outline-primary">New product</a>
-                        </p>
+                        <div class="row justify-content-between mb-2">
+                            <div class="col-6">
+                                <form action="{{route('products.index')}}" method="GET">
+                                    <div class="input-group">
+                                        <input value="{{request()->get('q')}}" type="text" name="q" class="form-control" placeholder="Search product by name">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-info" type="submit">Search</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-3">
+                                <a href="{{route('products.create')}}" class="btn btn-outline-primary">New product</a>
+                            </div>
+                        </div>
                         <table class="table">
                             <thead>
                             <tr>

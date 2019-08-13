@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Option;
 use App\Product;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use App\Http\Requests\CreateEditProduct;
@@ -13,11 +14,17 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('products.index', ['products' => Product::latest()->get()]);
+        $queryString = trim($request->get('q', ''));
+        $products = Product::when($queryString, function ($query, $queryString) {
+            return $query->where('name', 'like', '%'.$queryString.'%');
+        })->latest()->get();
+
+        return view('products.index', ['products' => $products]);
     }
 
     /**
