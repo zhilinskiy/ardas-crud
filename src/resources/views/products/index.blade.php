@@ -14,6 +14,9 @@
                                         <input value="{{request()->get('q')}}" type="text" name="q" class="form-control" placeholder="Search product by name">
                                         <div class="input-group-append">
                                             <button class="btn btn-outline-info" type="submit">Search</button>
+                                            @if (request()->has('q'))
+                                                <a class="btn btn-outline-success" href="{{route('products.index')}}">Clear</a>
+                                            @endif
                                         </div>
                                     </div>
                                 </form>
